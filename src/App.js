@@ -1,24 +1,29 @@
 import './index.css';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Card from './components/Card';
 import Drawer from './components/Drawer';
 
 function App() {
-  const goods = [
-    {
-      title: 'Мужские Кроссовки Nike Blazer Mid Suede',
-      price: '12 999',
-      id: 1,
-      path: '/img/1.png',
-    },
-    { title: 'Мужские Кроссовки Nike Air Max 270', price: '10 000', id: 2, path: '/img/2.png' },
-    { title: 'Мужские Кроссовки Nike Blazer Mid Suede', price: '8 499', id: 3, path: '/img/3.png' },
-    { title: 'Кроссовки Puma X Aka Boku Future Rider', price: '8 999', id: 4, path: '/img/4.png' },
-  ];
+  const [items, setItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [cartState, setCartState] = useState(false);
+
+  React.useEffect(() => {
+    fetch('https://611fac1b988f860017ac437f.mockapi.io/items')
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => setItems(json));
+  }, []);
+
+  const addToCart = (obj) => {
+    setCartItems((prev) => [...prev, obj]);
+  };
   return (
     <div className="wrapper clear">
-      <Drawer />
-      <Header />
+      {cartState ? <Drawer items={cartItems} removeCart={() => setCartState(false)} /> : null}
+      <Header clickCart={() => setCartState(true)} />
       <div className="content p-40">
         <div className="d-flex justify-between align-center mb-40">
           <h1 className="">Все кроссовки</h1>
@@ -33,9 +38,15 @@ function App() {
             <input placeholder="Поиск..." />
           </div>
         </div>
-        <div className="d-flex">
-          {goods.map((el) => (
-            <Card title={el.title} price={el.price} path={el.path} />
+        <div className="d-flex flex-wrap">
+          {items.map((el) => (
+            <Card
+              title={el.title}
+              price={el.price}
+              path={el.path}
+              onFavorite={() => console.log('saas')}
+              onPlus={(obj) => addToCart(obj)}
+            />
           ))}
         </div>
       </div>

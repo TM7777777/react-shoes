@@ -1,16 +1,21 @@
 import Card2 from '../Card2';
-const Drawer = () => {
+const Drawer = ({ removeCart, func, items = [] }) => {
   return (
-    <div style={{ display: 'none' }} className="overlay">
+    <div className="overlay">
       <div className="drawer">
         <h2 className="d-flex justify-between mb-40">
           Корзина
-          <img className="removeBtn cu-p" src="img/btnRemove.svg" alt="Remove" />
+          <img
+            onClick={removeCart}
+            className="removeBtn cu-p"
+            src="img/btnRemove.svg"
+            alt="Remove"
+          />
         </h2>
-
         <div className="items">
-          <Card2 />
-          <Card2 />
+          {items.map((el) => (
+            <Card2 path={el.path} title={el.title} price={el.price} />
+          ))}
         </div>
         <div className="cartTotalBlock">
           <ul>

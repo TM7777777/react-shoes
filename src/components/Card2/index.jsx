@@ -1,10 +1,10 @@
-const Card2 = () => {
+const Card2 = ({ path, click, title, price }) => {
   return (
     <div className="cartItem d-flex align-center mb-20">
-      <div className="cartImage" style={{ backgroundImage: 'url(img/1.png' }}></div>
+      <div className="cartImage" style={{ backgroundImage: `url(${path})` }}></div>
       <div className="mr-20 flex">
-        <p className="mb-5">Мужские Кроссовки Nike Blazer Mid Suede</p>
-        <strong>12 999 руб.</strong>
+        <p className="mb-5">{title}</p>
+        <strong>{price}</strong>
       </div>
       <img className="removeBtn" src="img/btnRemove.svg" alt="Remove" />
     </div>
