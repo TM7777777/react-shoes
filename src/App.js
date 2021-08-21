@@ -16,13 +16,24 @@ function App() {
       })
       .then((json) => setItems(json));
   }, []);
-
+  React.useEffect(() => {
+    cartState ? (document.body.style.overflow = 'hidden') : (document.body.style.overflow = 'auto');
+  }, [cartState]);
   const addToCart = (obj) => {
     setCartItems((prev) => [...prev, obj]);
   };
+  const removeFrom = (obj) => {
+    setCartItems(cartItems.filter((el, id) => id !== obj.id));
+  };
   return (
     <div className="wrapper clear">
-      {cartState ? <Drawer items={cartItems} removeCart={() => setCartState(false)} /> : null}
+      {cartState ? (
+        <Drawer
+          items={cartItems}
+          funcRem={(obj) => removeFrom(obj)}
+          removeCart={() => setCartState(false)}
+        />
+      ) : null}
       <Header clickCart={() => setCartState(true)} />
       <div className="content p-40">
         <div className="d-flex justify-between align-center mb-40">
@@ -44,6 +55,7 @@ function App() {
               title={el.title}
               price={el.price}
               path={el.path}
+              id={el.id}
               onFavorite={() => console.log('saas')}
               onPlus={(obj) => addToCart(obj)}
             />

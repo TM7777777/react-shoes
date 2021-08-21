@@ -1,14 +1,19 @@
 import { useState } from 'react';
 
-const Card = ({ path, title, price, onFavorite, onPlus }) => {
+const Card = ({ path, title, price, onFavorite, onPlus, id }) => {
   const [liked, setLiked] = useState(false);
   function handleClickLike() {
     setLiked((like) => !like);
   }
   const [plus, setPlus] = useState(false);
+
   function handleClickPlus() {
-    onPlus({ title, price, path });
-    setPlus((plusState) => !plusState);
+    if (!plus) {
+      onPlus({ title, price, path, id });
+      setPlus((plusState) => !plusState);
+    } else {
+      setPlus((plusState) => !plusState);
+    }
   }
   return (
     <div className="goods mb-30 mr-30">

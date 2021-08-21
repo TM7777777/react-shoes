@@ -1,5 +1,8 @@
 import Card2 from '../Card2';
-const Drawer = ({ removeCart, func, items = [] }) => {
+const Drawer = ({ removeCart, funcRem, items = [] }) => {
+  const getObj = (obj) => {
+    funcRem(obj);
+  };
   return (
     <div className="overlay">
       <div className="drawer">
@@ -13,8 +16,14 @@ const Drawer = ({ removeCart, func, items = [] }) => {
           />
         </h2>
         <div className="items">
-          {items.map((el) => (
-            <Card2 path={el.path} title={el.title} price={el.price} />
+          {items.map((el, id) => (
+            <Card2
+              path={el.path}
+              title={el.title}
+              price={el.price}
+              id={id}
+              click={(obj) => getObj(obj)}
+            />
           ))}
         </div>
         <div className="cartTotalBlock">
