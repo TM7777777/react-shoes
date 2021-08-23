@@ -1,6 +1,6 @@
-const Card2 = ({ path, click, title, price, id }) => {
+const CardItem = ({ path, title, price, id, click }) => {
   const handleClick = () => {
-    click({ title, price, path, id });
+    click(id);
   };
   return (
     <div className="cartItem d-flex align-center mb-20">
@@ -9,9 +9,14 @@ const Card2 = ({ path, click, title, price, id }) => {
         <p className="mb-5">{title}</p>
         <strong>{price}</strong>
       </div>
-      <img className="removeBtn" onClick={handleClick} src="img/btnRemove.svg" alt="Remove" />
+      <img
+        onClick={() => handleClick(id)}
+        className="removeBtn"
+        src="img/btnRemove.svg"
+        alt="Remove"
+      />
     </div>
   );
 };
 
-export default Card2;
+export default CardItem;

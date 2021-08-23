@@ -8,10 +8,13 @@ const Header = (props) => {
           <p className="opacity-5">Магазин лучших кроссовок</p>
         </div>
       </div>
-      <ul className="headerRight d-flex ">
-        <li className="mr-30 cu-p" onClick={props.clickCart}>
+      <ul className="headerRight d-flex">
+        <li className="val mr-20 cu-p" onClick={props.clickCart}>
           <img width={18} height={18} src="/img/cart.svg" alt="img" className="mr-15" />
-          <span className="val">1205 руб.</span>
+          <span className="val">{`${props.sum} руб.`}</span>
+        </li>
+        <li>
+          <img width={19} height={19} className="cu-p mr-10" src="/img/favorite.svg" alt="" />
         </li>
         <li>
           <img src="/img/acc.svg" alt="img" className="cu-p" />

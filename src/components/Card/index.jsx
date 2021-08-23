@@ -2,10 +2,16 @@ import { useState } from 'react';
 
 const Card = ({ path, title, price, onFavorite, onPlus, id }) => {
   const [liked, setLiked] = useState(false);
-  function handleClickLike() {
-    setLiked((like) => !like);
-  }
   const [plus, setPlus] = useState(false);
+
+  function handleClickLike() {
+    if (!liked) {
+      onFavorite({ title, price, path, id });
+      setLiked((like) => !like);
+    } else {
+      setLiked((like) => !like);
+    }
+  }
 
   function handleClickPlus() {
     if (!plus) {
@@ -16,7 +22,7 @@ const Card = ({ path, title, price, onFavorite, onPlus, id }) => {
     }
   }
   return (
-    <div className="goods mb-30 mr-30">
+    <div className="goods">
       <div className="unlikeDiv">
         <img
           className="unliked"
@@ -25,7 +31,7 @@ const Card = ({ path, title, price, onFavorite, onPlus, id }) => {
           alt=""
         />
       </div>
-      <img width={133} heigth={112} src={path} alt="" />
+      <img className="cardImg" width={133} heigth={112} src={path} alt="" />
       <p>{title}</p>
       <div className="d-flex justify-between align-center pt-10">
         <div className="contbox d-flex flex-column">

@@ -1,4 +1,5 @@
 import './index.css';
+import axios from 'axios';
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Card from './components/Card';
@@ -7,37 +8,64 @@ import Drawer from './components/Drawer';
 function App() {
   const [items, setItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
+  const [favItems, setFavItems] = useState([]);
   const [cartState, setCartState] = useState(false);
+  const [searchState, setSearchState] = useState('');
+
+  const sum = cartItems.reduce((acc, el) => (acc += +el.price), 0);
+  const fee = Math.round(sum * 0.05);
+
+  // const link = `https://611fac1b988f860017ac437f.mockapi.io`;
 
   React.useEffect(() => {
-    fetch('https://611fac1b988f860017ac437f.mockapi.io/items')
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => setItems(json));
+    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/items`).then((res) => {
+      setItems(res.data);
+    });
+    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/cart`).then((res) => {
+      setCartItems(res.data);
+    });
+    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/favorites`).then((res) => {
+      setFavItems(res.data);
+    });
   }, []);
-  React.useEffect(() => {
-    cartState ? (document.body.style.overflow = 'hidden') : (document.body.style.overflow = 'auto');
-  }, [cartState]);
+
   const addToCart = (obj) => {
+    axios.post(`https://611fac1b988f860017ac437f.mockapi.io/cart`, obj);
     setCartItems((prev) => [...prev, obj]);
   };
-  const removeFrom = (obj) => {
-    setCartItems(cartItems.filter((el, id) => id !== obj.id));
+
+  const removeItem = (id) => {
+    axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/cart/${id}`);
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
+
+  const onChangeSearchInput = (event) => {
+    setSearchState(event.target.value);
+  };
+
+  const onAddFavorite = (obj) => {
+    axios.post(`https://611fac1b988f860017ac437f.mockapi.io/favorites`, obj);
+    setFavItems((prev) => [...prev, obj]);
+    console.log(favItems);
+  };
+
   return (
     <div className="wrapper clear">
       {cartState ? (
         <Drawer
           items={cartItems}
-          funcRem={(obj) => removeFrom(obj)}
+          onRemove={removeItem}
           removeCart={() => setCartState(false)}
+          sum={sum}
+          fee={fee}
         />
       ) : null}
-      <Header clickCart={() => setCartState(true)} />
+      <Header clickCart={() => setCartState(true)} sum={sum} />
       <div className="content p-40">
         <div className="d-flex justify-between align-center mb-40">
-          <h1 className="">Все кроссовки</h1>
+          <h1 className="genTitle">
+            {searchState ? `Поиск по запросу: "${searchState}"` : 'Все кроссовки'}
+          </h1>
           <div className="search-block d-flex">
             <img
               width={14}
@@ -46,20 +74,38 @@ function App() {
               src="/img/search.svg "
               alt="Search"
             />
-            <input placeholder="Поиск..." />
+            <input
+              onChange={onChangeSearchInput}
+              value={searchState}
+              maxLength={30}
+              placeholder="Поиск..."
+            />
+            {searchState && (
+              <img
+                onClick={() => setSearchState('')}
+                className="cu-p mr-10"
+                width={30}
+                heigth={30}
+                src="/img/searchdel.svg"
+                alt="remove"
+              />
+            )}
           </div>
         </div>
         <div className="d-flex flex-wrap">
-          {items.map((el) => (
-            <Card
-              title={el.title}
-              price={el.price}
-              path={el.path}
-              id={el.id}
-              onFavorite={() => console.log('saas')}
-              onPlus={(obj) => addToCart(obj)}
-            />
-          ))}
+          {items
+            .filter((item) => item.title.toLowerCase().includes(searchState.toLowerCase()))
+            .map((el) => (
+              <Card
+                key={el.title}
+                title={el.title}
+                price={el.price}
+                path={el.path}
+                id={el.id}
+                onFavorite={(obj) => onAddFavorite(obj)}
+                onPlus={(obj) => addToCart(obj)}
+              />
+            ))}
         </div>
       </div>
     </div>
