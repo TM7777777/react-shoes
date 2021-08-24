@@ -1,16 +1,41 @@
 import './index.css';
 import axios from 'axios';
 import React, { useState } from 'react';
+import { Route } from 'react-router-dom';
 import Header from './components/Header';
-import Card from './components/Card';
 import Drawer from './components/Drawer';
+import Favorites from './components/pages/Favorites';
+import Home from './components/pages/Home';
+import Orders from './components/pages/Orders';
 
 function App() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([
+    {
+      title: 'Мужские Кроссовки Nike Blazer Mid Suede',
+      price: '12 999',
+      path: '/img/sneakers/1.png',
+    },
+    {
+      title: 'Мужские Кроссовки Nike Blazer Mid Suede',
+      price: '12 999',
+      path: '/img/sneakers/1.png',
+    },
+    {
+      title: 'Мужские Кроссовки Nike Blazer Mid Suede',
+      price: '12 999',
+      path: '/img/sneakers/1.png',
+    },
+    {
+      title: 'Мужские Кроссовки Nike Blazer Mid Suede',
+      price: '12 999',
+      path: '/img/sneakers/1.png',
+    },
+  ]);
   const [cartItems, setCartItems] = useState([]);
   const [favItems, setFavItems] = useState([]);
   const [cartState, setCartState] = useState(false);
   const [searchState, setSearchState] = useState('');
+  const [isLoading, setLoading] = useState(true);
 
   const sum = cartItems.reduce((acc, el) => (acc += +el.price), 0);
   const fee = Math.round(sum * 0.05);
@@ -18,20 +43,32 @@ function App() {
   // const link = `https://611fac1b988f860017ac437f.mockapi.io`;
 
   React.useEffect(() => {
-    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/items`).then((res) => {
-      setItems(res.data);
-    });
-    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/cart`).then((res) => {
-      setCartItems(res.data);
-    });
-    axios.get(`https://611fac1b988f860017ac437f.mockapi.io/favorites`).then((res) => {
-      setFavItems(res.data);
-    });
+    async function fetchData() {
+      const cartResponse = await axios.get(`https://611fac1b988f860017ac437f.mockapi.io/cart`);
+      const favResponse = await axios.get(`https://611fac1b988f860017ac437f.mockapi.io/favorites`);
+      const itemsResopnse = await axios.get(`https://611fac1b988f860017ac437f.mockapi.io/items`);
+      setLoading(false);
+
+      setCartItems(cartResponse.data);
+      setFavItems(favResponse.data);
+      setItems(itemsResopnse.data);
+    }
+
+    fetchData();
   }, []);
 
-  const addToCart = (obj) => {
-    axios.post(`https://611fac1b988f860017ac437f.mockapi.io/cart`, obj);
-    setCartItems((prev) => [...prev, obj]);
+  const addToCart = async (obj) => {
+    try {
+      if (cartItems.find((cartobj) => Number(cartobj.id) === Number(obj.id))) {
+        axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/cart/${obj.id}`);
+        setCartItems((prev) => prev.filter((item) => Number(item.id) !== Number(obj.id)));
+      } else {
+        const { data } = await axios.post(`https://611fac1b988f860017ac437f.mockapi.io/cart`, obj);
+        setCartItems((prev) => [...prev, data]);
+      }
+    } catch (error) {
+      alert('Не удалось добавить в корзину!');
+    }
   };
 
   const removeItem = (id) => {
@@ -43,10 +80,20 @@ function App() {
     setSearchState(event.target.value);
   };
 
-  const onAddFavorite = (obj) => {
-    axios.post(`https://611fac1b988f860017ac437f.mockapi.io/favorites`, obj);
-    setFavItems((prev) => [...prev, obj]);
-    console.log(favItems);
+  const onAddFavorite = async (obj) => {
+    try {
+      if (favItems.find((favobj) => favobj.id === obj.id)) {
+        axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/favorites/${obj.id}`);
+      } else {
+        const { data } = await axios.post(
+          `https://611fac1b988f860017ac437f.mockapi.io/favorites`,
+          obj,
+        );
+        setFavItems((prev) => [...prev, data]);
+      }
+    } catch (error) {
+      alert('Не удалось добавить в закладки!');
+    }
   };
 
   return (
@@ -61,53 +108,24 @@ function App() {
         />
       ) : null}
       <Header clickCart={() => setCartState(true)} sum={sum} />
-      <div className="content p-40">
-        <div className="d-flex justify-between align-center mb-40">
-          <h1 className="genTitle">
-            {searchState ? `Поиск по запросу: "${searchState}"` : 'Все кроссовки'}
-          </h1>
-          <div className="search-block d-flex">
-            <img
-              width={14}
-              heigth={14}
-              className="mr-10 ml-10"
-              src="/img/search.svg "
-              alt="Search"
-            />
-            <input
-              onChange={onChangeSearchInput}
-              value={searchState}
-              maxLength={30}
-              placeholder="Поиск..."
-            />
-            {searchState && (
-              <img
-                onClick={() => setSearchState('')}
-                className="cu-p mr-10"
-                width={30}
-                heigth={30}
-                src="/img/searchdel.svg"
-                alt="remove"
-              />
-            )}
-          </div>
-        </div>
-        <div className="d-flex flex-wrap">
-          {items
-            .filter((item) => item.title.toLowerCase().includes(searchState.toLowerCase()))
-            .map((el) => (
-              <Card
-                key={el.title}
-                title={el.title}
-                price={el.price}
-                path={el.path}
-                id={el.id}
-                onFavorite={(obj) => onAddFavorite(obj)}
-                onPlus={(obj) => addToCart(obj)}
-              />
-            ))}
-        </div>
-      </div>
+      <Route path="/" exact>
+        <Home
+          items={items}
+          cartItems={cartItems}
+          searchState={searchState}
+          isLoading={isLoading}
+          onChangeSearchInput={onChangeSearchInput}
+          setSearchState={setSearchState}
+          addToCart={addToCart}
+          onAddFavorite={onAddFavorite}
+        />
+      </Route>
+      <Route path="/favorites">
+        <Favorites items={favItems} onAddFavorite={onAddFavorite} addToCart={addToCart} />
+      </Route>
+      <Route path="/orders">
+        <Orders />
+      </Route>
     </div>
   );
 }

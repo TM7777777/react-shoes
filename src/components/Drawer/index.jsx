@@ -1,4 +1,4 @@
-import CardItem from '../CartItem';
+import CartItem from '../CartItem';
 
 const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
   return (
@@ -19,12 +19,13 @@ const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
           <>
             <div className="items">
               {items.map((el) => (
-                <CardItem
-                  key={el.title}
+                <CartItem
+                  key={el.id}
                   title={el.title}
                   path={el.path}
                   price={el.price}
-                  click={() => onRemove(el.id)}
+                  id={el.id}
+                  click={(id) => onRemove(id, false)}
                 />
               ))}
             </div>
@@ -59,7 +60,7 @@ const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
                 <p className="par">Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.</p>
               </li>
             </ul>
-            <button onClick={removeCart} className="greenBtn align-center">
+            <button onClick={removeCart} className="greenBtn align-cente mt-50">
               <img className="arrow2" src="/img/arrow2.svg" alt="Arrow" />
               Вернуться назад
             </button>

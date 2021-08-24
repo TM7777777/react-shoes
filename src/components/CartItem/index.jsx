@@ -1,6 +1,6 @@
-const CardItem = ({ path, title, price, id, click }) => {
+const CartItem = ({ path, title, price, id, click }) => {
   const handleClick = () => {
-    click(id);
+    click(id, false);
   };
   return (
     <div className="cartItem d-flex align-center mb-20">
@@ -19,4 +19,4 @@ const CardItem = ({ path, title, price, id, click }) => {
   );
 };
 
-export default CardItem;
+export default CartItem;

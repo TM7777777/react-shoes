@@ -216,7 +216,6 @@ input {
 .cartTotalBlock2 .greenBtn {
   width: 280px;
   height: 55px;
-  margin-top: 60px;
 }
 .cartTotalBlock2 .greenBtn:hover img {
   transform: translateX(-5px);
@@ -242,6 +241,32 @@ input {
 
   color: #000000;
 
+  opacity: 0.4;
+}
+
+.cartTotalBlock2 .par2 {
+  position: absolute;
+  min-width: 200px;
+  right: 350px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 23px;
+  text-align: center;
+  color: #000000;
+  opacity: 0.4;
+}
+
+.cartTotalBlock2 .par3 {
+  position: absolute;
+  min-width: 200px;
+  right: 310px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 23px;
+  text-align: center;
+  color: #000000;
   opacity: 0.4;
 }
 
