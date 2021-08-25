@@ -1,4 +1,6 @@
+import React from 'react';
 import ContentLoader from 'react-content-loader';
+import { AppContext } from '../../App';
 import { useState } from 'react';
 
 const Card = ({
@@ -9,33 +11,18 @@ const Card = ({
   onPlus,
   id,
   favorited = false,
-  added = false,
   loading = false,
 }) => {
+  const { isItemAdd } = React.useContext(AppContext);
   const [liked, setLiked] = useState(favorited);
-  const [plus, setPlus] = useState(added);
 
   function handleClickLike() {
-    // if (!liked) {
-    //   onFavorite({ title, price, path, id });
-    //   setLiked((like) => !like);
-    // } else {
-    //   setLiked((like) => !like);
-    // }
     onFavorite({ title, price, path, id });
     setLiked((like) => !like);
   }
-
-  function handleClickPlus() {
-    // if (!plus) {
-    //   onPlus({ title, price, path, id });
-    //   setPlus((plusState) => !plusState);
-    // } else {
-    //   setPlus((plusState) => !plusState);
-    // }
-    onPlus({ title, price, path, id });
-    setPlus((plusState) => !plusState);
-  }
+  const handleClickPlus = async () => {
+    (await isItemAdd(title)) ? alert('sdsads') : onPlus({ title, price, path, id });
+  };
   return (
     <div className="goods">
       {loading ? (
@@ -72,7 +59,7 @@ const Card = ({
             <img
               className="plusBtn"
               onClick={handleClickPlus}
-              src={plus ? '/img/plusact.svg' : '/img/plusBtn1.svg'}
+              src={isItemAdd(title) ? '/img/plusact.svg' : '/img/plusBtn1.svg'}
               alt=""
             />
           </div>

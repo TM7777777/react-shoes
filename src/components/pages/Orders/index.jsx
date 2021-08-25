@@ -1,5 +1,5 @@
 import Card from '../../Card';
-import NoItems from '../../NoItems';
+import Info from '../../Info';
 
 const Orders = ({ items = [], onAddFavorite, addToCart }) => {
   return (
@@ -19,11 +19,12 @@ const Orders = ({ items = [], onAddFavorite, addToCart }) => {
           </div>{' '}
         </>
       ) : (
-        <NoItems
-          title={'У вас нет заказов'}
-          imgUrl={'/img/sad2.png'}
-          parcl={'par3'}
-          par={'Вы нищеброд? Оформите хотя бы один заказ.'}
+        <Info
+          title="У вас нет заказов"
+          description="Вы нищеброд? Оформите хотя бы один заказ."
+          imgUrl="/img/sad2.svg"
+          wid="60px"
+          hgt="60px"
         />
       )}
     </div>

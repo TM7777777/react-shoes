@@ -1,6 +1,36 @@
+import React from 'react';
+import { AppContext } from '../../App';
+import axios from 'axios';
 import CartItem from '../CartItem';
+import Info from '../Info';
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
+  const { cartItems, setCartItems } = React.useContext(AppContext);
+  const [isCompOrder, setCompOrder] = React.useState(false);
+  const [countId, setCountId] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const clickOrder = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post(`https://611fac1b988f860017ac437f.mockapi.io/orders`, {
+        items: cartItems,
+      });
+      setCountId(data.id);
+      setCompOrder(true);
+      setCartItems([]);
+      for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        await axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/cart` + item.id);
+        await delay(1000);
+      }
+    } catch (error) {
+      alert('Не удалось создать заказ :(');
+    }
+    setIsLoading(false);
+  };
   return (
     <div className="overlay">
       <div className="drawer">
@@ -42,29 +72,23 @@ const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
                   <b>{`${fee} руб.`}</b>
                 </li>
               </ul>
-              <button className="greenBtn">
+              <button disabled={isLoading} onClick={clickOrder} className="greenBtn">
                 Оформить заказ <img src="/img/arrow.svg" alt="Arrow" />
               </button>
             </div>
           </>
         ) : (
-          <div className="cartTotalBlock2 d-flex flex-column align-center m-40">
-            <ul className="d-flex flex-column align-center m-30">
-              <li>
-                <img width={120} heigth={120} src="/img/cartimg.png" alt="img" />
-              </li>
-              <li className="cartit">
-                <h2>Корзина пустая</h2>
-              </li>
-              <li>
-                <p className="par">Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.</p>
-              </li>
-            </ul>
-            <button onClick={removeCart} className="greenBtn align-cente mt-50">
-              <img className="arrow2" src="/img/arrow2.svg" alt="Arrow" />
-              Вернуться назад
-            </button>
-          </div>
+          <Info
+            title={isCompOrder ? 'Заказ оформлен' : 'Корзина пустая'}
+            description={
+              isCompOrder
+                ? `Ваш заказ #${countId} скоро будет передан курьерской доставке`
+                : 'Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.'
+            }
+            imgUrl={isCompOrder ? '/img/order.svg' : '/img/cartimg.svg'}
+            wid="120px"
+            hgh="120px"
+          />
         )}
       </div>
     </div>

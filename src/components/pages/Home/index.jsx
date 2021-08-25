@@ -1,3 +1,4 @@
+import React from 'react';
 import Card from '../../Card';
 
 const Home = ({
@@ -7,7 +8,6 @@ const Home = ({
   setSearchState,
   onAddFavorite,
   addToCart,
-  cartItems,
   isLoading,
 }) => {
   const renderItems = () => {
@@ -17,15 +17,10 @@ const Home = ({
     return (isLoading ? [...Array(12)] : filtredItems).map((el, index) => (
       <Card
         key={index}
-        // title={el.title}
-        // price={el.price}
-        // path={el.path}
-        // id={el.id}
         {...el}
         loading={isLoading}
         onFavorite={(obj) => onAddFavorite(obj)}
         onPlus={(obj) => addToCart(obj)}
-        added={cartItems.some((obj) => Number(obj.id) === Number(el.id))}
       />
     ));
   };
