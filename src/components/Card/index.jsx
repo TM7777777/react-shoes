@@ -1,7 +1,6 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
 import { AppContext } from '../../App';
-import { useState } from 'react';
 
 const Card = ({
   path,
@@ -13,15 +12,15 @@ const Card = ({
   favorited = false,
   loading = false,
 }) => {
-  const { isItemAdd } = React.useContext(AppContext);
-  const [liked, setLiked] = useState(favorited);
+  const { isFavAdd, isItemAdd } = React.useContext(AppContext);
 
-  function handleClickLike() {
-    onFavorite({ title, price, path, id });
-    setLiked((like) => !like);
-  }
-  const handleClickPlus = async () => {
-    (await isItemAdd(title)) ? alert('sdsads') : onPlus({ title, price, path, id });
+  const obj = { title, price, path, id, parentId: id };
+
+  const handleClickLike = () => {
+    onFavorite(obj);
+  };
+  const handleClickPlus = () => {
+    onPlus(obj);
   };
   return (
     <div className="goods">
@@ -42,12 +41,15 @@ const Card = ({
       ) : (
         <>
           <div className="unlikeDiv">
-            <img
-              className="unliked"
-              onClick={handleClickLike}
-              src={liked ? '/img/heartact.svg' : '/img/heart.png'}
-              alt=""
-            />
+            {favorited ||
+              (onFavorite && (
+                <img
+                  className="unliked"
+                  onClick={handleClickLike}
+                  src={isFavAdd(id) ? '/img/heartact.svg' : '/img/heart.png'}
+                  alt=""
+                />
+              ))}
           </div>
           <img className="cardImg" width="100%" heigth={135} src={path} alt="" />
           <p>{title}</p>
@@ -56,12 +58,14 @@ const Card = ({
               <span>Цена:</span>
               <strong>{price} руб.</strong>
             </div>
-            <img
-              className="plusBtn"
-              onClick={handleClickPlus}
-              src={isItemAdd(title) ? '/img/plusact.svg' : '/img/plusBtn1.svg'}
-              alt=""
-            />
+            {onPlus && (
+              <img
+                className="plusBtn"
+                onClick={handleClickPlus}
+                src={isItemAdd(id) ? '/img/plusact.svg' : '/img/plusBtn1.svg'}
+                alt=""
+              />
+            )}
           </div>
         </>
       )}

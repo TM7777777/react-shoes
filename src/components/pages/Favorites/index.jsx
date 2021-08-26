@@ -3,19 +3,30 @@ import Card from '../../Card';
 import Info from '../../Info';
 import { AppContext } from '../../../App';
 
-const Favorites = ({ onAddFavorite, addToCart }) => {
+const Favorites = ({ onAddFavorite, addToCart, isLoading }) => {
   const { favItems } = React.useContext(AppContext);
   return (
     <div className="p-40 d-flex flex-column justify-between mb-40">
-      {favItems.length > 0 ? (
+      {isLoading ? (
         <>
           <h1>Мои закладки</h1>
           <div className="d-flex flex-wrap">
-            {favItems.map((el) => (
+            {[...Array(12)].map((el, index) => (
+              <Card {...el} key={index} loading={isLoading} favorited={false} />
+            ))}
+          </div>
+        </>
+      ) : favItems.length > 0 ? (
+        <>
+          <h1>Мои закладки</h1>
+          <div className="d-flex flex-wrap">
+            {favItems.map((el, id) => (
               <Card
                 {...el}
+                key={id}
                 onFavorite={(obj) => onAddFavorite(obj)}
                 onPlus={(obj) => addToCart(obj)}
+                loading={isLoading}
                 favorited={true}
               />
             ))}

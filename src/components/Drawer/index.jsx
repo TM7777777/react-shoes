@@ -6,7 +6,7 @@ import Info from '../Info';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
+const Drawer = ({ onRemove, removeCart, items = [], sum, fee, opened }) => {
   const { cartItems, setCartItems } = React.useContext(AppContext);
   const [isCompOrder, setCompOrder] = React.useState(false);
   const [countId, setCountId] = React.useState(0);
@@ -23,16 +23,14 @@ const Drawer = ({ onRemove, removeCart, items = [], sum, fee }) => {
       setCartItems([]);
       for (let i = 0; i < cartItems.length; i++) {
         const item = cartItems[i];
-        await axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/cart` + item.id);
+        await axios.delete(`https://611fac1b988f860017ac437f.mockapi.io/cart/${item.id}`);
         await delay(1000);
       }
-    } catch (error) {
-      alert('Не удалось создать заказ :(');
-    }
+    } catch (error) {}
     setIsLoading(false);
   };
   return (
-    <div className="overlay">
+    <div className={`overlay ${opened ? `overlayVisible` : `overlayHidden`}`}>
       <div className="drawer">
         <h2 className="d-flex justify-between mb-40">
           Корзина

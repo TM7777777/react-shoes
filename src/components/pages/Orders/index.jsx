@@ -1,22 +1,40 @@
+import React from 'react';
+import axios from 'axios';
 import Card from '../../Card';
 import Info from '../../Info';
 
-const Orders = ({ items = [], onAddFavorite, addToCart }) => {
+const Orders = () => {
+  const [orders, setOrders] = React.useState([]);
+  const [isLoading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(`https://611fac1b988f860017ac437f.mockapi.io/orders`);
+        setOrders(data.map((el) => el.items).flat());
+        setLoading(false);
+      } catch (error) {}
+    })();
+  }, []);
   return (
     <div className="p-40 d-flex flex-column justify-between mb-40">
-      {items.length > 0 ? (
+      {isLoading ? (
         <>
-          <h1>Мои закладки</h1>
+          <h1>Мои заказы</h1>
           <div className="d-flex flex-wrap">
-            {items.map((el) => (
-              <Card
-                {...el}
-                onFavorite={(obj) => onAddFavorite(obj)}
-                onPlus={(obj) => addToCart(obj)}
-                favorited={true}
-              />
+            {[...Array(12)].map((el, index) => (
+              <Card {...el} key={index} loading={isLoading} favorited={false} />
             ))}
-          </div>{' '}
+          </div>
+        </>
+      ) : orders.length > 0 ? (
+        <>
+          <h1>Мои заказы</h1>
+          <div className="d-flex flex-wrap">
+            {orders.map((el, index) => (
+              <Card {...el} key={index} loading={isLoading} favorited={false} />
+            ))}
+          </div>
         </>
       ) : (
         <Info
